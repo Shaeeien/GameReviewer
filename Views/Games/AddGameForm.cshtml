@@ -1,0 +1,23 @@
+﻿@model Game
+
+<form asp-action="AddGame" asp-controller="Games" method="post" enctype="multipart/form-data">
+    <label asp-for="Name"></label><br />
+    <input name="name" type="text" /><br />
+    <label asp-for="Producer"></label><br />
+    <select name="producer">
+        @using(var DbCtx = new ReviewContext()){
+            foreach(Producer p in DbCtx.Producers){
+                <option>
+                    @p.Name
+                </option>
+            }
+        }
+    </select><br />
+    <label asp-for="AvgPlayTimeInHours"></label><br />
+    <input name="avgLength" type="number" /><br />
+    <label asp-for="Description"></label><br />
+    <textarea style="width:500px; height: 500px;" name="description" maxlength="1000"></textarea><br />
+    <label asp-for="GameImages"></label><br />
+    <input type="file" name="images" multiple  accept="image/*"/><br />
+    <button type="submit">Dodaj grę</button>
+</form>

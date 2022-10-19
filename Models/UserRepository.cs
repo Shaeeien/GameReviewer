@@ -46,7 +46,10 @@
         {
             var removedUser = _reviewContext.AppUsers.Remove(entity);
             if (removedUser != null)
+            {
+                _reviewContext.SaveChanges();
                 return true;
+            }               
             return false;
         }
 
@@ -74,6 +77,11 @@
                 return true;
             }
             return false;
+        }
+
+        public int GetId(AppUser entity)
+        {
+            return entity.Id;
         }
     }
 }

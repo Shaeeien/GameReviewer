@@ -6,9 +6,11 @@ namespace GameReviewer.Models
 {
     public class ReviewContext : DbContext
     {
-        public ReviewContext() 
+        public ReviewContext(DbContextOptions options) : base(options) 
         {
         }
+
+        public ReviewContext() { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
@@ -29,11 +31,17 @@ namespace GameReviewer.Models
             builder.Entity<Game>().HasMany(x => x.GameImages).WithOne(b => b.Game);
             builder.Entity<Game>().HasMany(x => x.Categories).WithOne(b => b.Game);
             builder.Entity<Game>().HasMany(x => x.GameImages).WithOne(b => b.Game);
+            builder.Entity<Producer>().HasKey(x => x.Id);
+            builder.Entity<Game>().HasOne(x => x.Producer).WithMany(b => b.Games);
+            builder.Entity<Game>().HasMany(x => x.GameImages).WithOne(b => b.Game);
+            builder.Entity<Image>().HasKey(x => x.Id);
+            builder.Entity<Image>().HasOne(x => x.Game).WithMany(b => b.GameImages);
         }
 
         public DbSet<Game> Games { get; set; }
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Producer> Producers { get; set; }
     }
 }
