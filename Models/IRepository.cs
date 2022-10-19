@@ -10,5 +10,6 @@
         public bool Remove(int id);
         public IEnumerable<T> GetAll();
         public T? GetByTitle(string title);
+        public int GetId(T entity);
     }
 }

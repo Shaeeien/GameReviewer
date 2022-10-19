@@ -4,13 +4,19 @@
     {
         private readonly ReviewContext _reviewContext;
 
-        public GameRepository()
+        public GameRepository(ReviewContext reviewContext)
         {
-            _reviewContext = new ReviewContext();
+            _reviewContext = reviewContext;
         }
-        public void Add(Game entity)
+        public bool Add(Game entity)
         {
-            _reviewContext.Games.Add(entity);
+            if (GetByTitle(entity.Name) == null)
+            {
+                _reviewContext.Games.Add(entity);
+                _reviewContext.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         public IEnumerable<Game> GetAll()
@@ -33,36 +39,50 @@
             return _reviewContext.Games.Contains(entity);
         }
 
-        public void Remove(Game entity)
+        public bool Remove(Game entity)
         {
-            _reviewContext.Games.Remove(entity);
-            _reviewContext.SaveChanges();
+            var removedGame  = _reviewContext.Games.Remove(entity);
+            if (removedGame != null)
+            {
+                _reviewContext.SaveChanges();
+                return true;
+            }
+            return false;
+                
         }
 
-        public void Remove(int id)
+        public bool Remove(int id)
         {
             Game? gameToRemove = _reviewContext.Games.Where(x => x.Id == id).FirstOrDefault();
             if(gameToRemove != null)
             {
                 _reviewContext.Games.Remove(gameToRemove);
                 _reviewContext.SaveChanges();
+                return true;
             }
-                
+            return false;
         }
 
-        public void Update(int id, Game updatedEntity)
+        public bool Update(int id, Game updatedEntity)
         {
             Game? gameToUpdate = _reviewContext.Games.Where(x => x.Id == id).FirstOrDefault();
             if(gameToUpdate != null)
             {
                 gameToUpdate.Reviews = updatedEntity.Reviews;
                 gameToUpdate.Categories = updatedEntity.Categories;
-                gameToUpdate.AvgPlayTimeInMins = updatedEntity.AvgPlayTimeInMins;
+                gameToUpdate.AvgPlayTimeInHours = updatedEntity.AvgPlayTimeInHours;
                 gameToUpdate.Description = updatedEntity.Description;
                 gameToUpdate.GameImages = updatedEntity.GameImages;
                 gameToUpdate.Name = updatedEntity.Name;
                 _reviewContext.SaveChanges();
+                return true;
             }
+            return false;
+        }
+
+        public int GetId(Game entity)
+        {
+            return entity.Id;
         }
     }
 }

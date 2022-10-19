@@ -1,7 +1,13 @@
+using GameReviewer.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<ReviewContext>(x => x.UseSqlServer(
+        "Server=DESKTOP-EII9684;Database=GameReviewer;Trusted_Connection=True;"
+    ));
 
 var app = builder.Build();
 
