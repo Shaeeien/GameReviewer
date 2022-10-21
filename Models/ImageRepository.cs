@@ -1,6 +1,6 @@
 ﻿namespace GameReviewer.Models
 {
-    public class ImageRepository : IRepository<Image>
+    public class ImageRepository : IRepository<Image>, IDisposable
     {
         private readonly ReviewContext _reviewContext;
         public ImageRepository(ReviewContext reviewContext)
@@ -19,6 +19,11 @@
             return false;
         }
 
+        public void Dispose()
+        {
+            _reviewContext.Dispose();
+        }
+
         public bool Exists(Image entity)
         {
             return _reviewContext.Images.Contains(entity);
@@ -26,12 +31,12 @@
 
         public IEnumerable<Image> GetAll()
         {
-            return _reviewContext.Images;
+            return _reviewContext.Images.ToList();
         }
 
         public Image? GetById(int id)
         {
-            return _reviewContext.Images.Find(id);
+            return _reviewContext.Images.Where(x => x.Id == id).FirstOrDefault();
         }
 
         public Image? GetByTitle(string title)
@@ -42,6 +47,17 @@
         public int GetId(Image entity)
         {
             return entity.Id;
+        }
+
+        public List<Image> GetByGame(Game game)
+        {
+            return GetAll().Where(x => x.GameId == game.Id).ToList();
+        }
+
+        public void RemoveByGame(Game game)
+        {
+            foreach (Image img in game.GameImages)
+                _reviewContext.Images.Remove(img);
         }
 
         public bool Remove(Image entity)

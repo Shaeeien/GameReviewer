@@ -19,8 +19,7 @@ namespace GameReviewer.Controllers
 
         public IActionResult GamesList()
         {
-            GameRepository gameRepository = new GameRepository(_reviewContext); 
-            return View(gameRepository.GetAll());
+            return View();
         }
 
         public IActionResult AddGameForm()
@@ -28,8 +27,13 @@ namespace GameReviewer.Controllers
             return View();
         }
 
+        public IActionResult Details(Game game)
+        {
+            return View(game);
+        }
+
         [HttpPost]
-        public IActionResult AddGame(string name, string producer, int producerId, int avgLength, string description,[FromForm(Name = "images")] List<IFormFile> images)
+        public async Task<IActionResult> AddGame(string name, string producer, int producerId, int avgLength, string description,[FromForm(Name = "images")] List<IFormFile> images)
         {
             GameRepository gameRepository = new GameRepository(_reviewContext);
             ProducerRepository producerRepository = new ProducerRepository(_reviewContext);
@@ -84,6 +88,11 @@ namespace GameReviewer.Controllers
         }
 
         public IActionResult UpdateGame()
+        {
+            return View();
+        }
+
+        public IActionResult RateGame(Game game, double rating, string review)
         {
             return View();
         }

@@ -1,0 +1,32 @@
+﻿@model Game
+
+<h1>@Model.Name</h1>
+@*Tutaj będą fotki*@
+<div>
+    @using(ImageRepository repo = new ImageRepository(new ReviewContext())){
+        foreach(Image img in repo.GetAll()){
+            if(img.GameId == Model.Id && img.Data != null){
+                <img src="data:image/jpeg;base64,@Convert.ToBase64String(img.Data)" />
+            }
+        }
+    }
+</div>
+<div>Średni czas gry(w godzinach): @Model.AvgPlayTimeInHours</div>
+<div>
+    <textarea style="resize: none; width=500px; height=500px;" readonly>@Model.Description</textarea>
+</div>
+<form asp-action="RateGame" asp-controller="Games">
+    <textarea name="review" style="resize: none; width=500px; height=500px;"></textarea>
+    <select name="rating">
+        <option>1.0</option>
+        <option>1.5</option>
+        <option>2.0</option>
+        <option>2.5</option>
+        <option>3.0</option>
+        <option>3.5</option>
+        <option>4.0</option>
+        <option>4.5</option>
+        <option selected>5.0</option>
+    </select>
+    <button type="submit">Dodaj recenzję</button>
+</form>

@@ -27,6 +27,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZXNcQWRkaW5nU3VjY2Vzc2Z1bC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/dotNETProjekty/GameReviewer/GameReviewer/Views/Games/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/dotNETProjekty/GameReviewer/GameReviewer/Views/Games/GameNotFound.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZXNcR2FtZU5vdEZvdW5kLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

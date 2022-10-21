@@ -1,6 +1,6 @@
 ﻿namespace GameReviewer.Models
 {
-    public class GameRepository : IRepository<Game>
+    public class GameRepository : IRepository<Game>, IDisposable
     {
         private readonly ReviewContext _reviewContext;
 
@@ -83,6 +83,11 @@
         public int GetId(Game entity)
         {
             return entity.Id;
+        }
+
+        public void Dispose()
+        {
+            _reviewContext?.Dispose();
         }
     }
 }
