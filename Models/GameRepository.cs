@@ -26,7 +26,7 @@
 
         public Game? GetById(int id)
         {
-            return _reviewContext.Games.Find(id);
+            return _reviewContext.Games.Where(x => x.Id == id).First();
         }
 
         public Game? GetByTitle(string title)

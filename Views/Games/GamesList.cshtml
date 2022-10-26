@@ -14,7 +14,7 @@
                 <img src="data:image/jpeg;base64,@Convert.ToBase64String(@imag.Data)" />
             }
             <form asp-controller="Games" asp-action="Details">
-                <input type="hidden" value="@game.Id" />
+                <input name="id" type="hidden" value=@game.Id />
                 <button type="submit">Szczegóły</button>
             </form>
                       

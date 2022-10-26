@@ -1,8 +1,13 @@
-﻿namespace GameReviewer.Models
+﻿using Microsoft.AspNetCore.Identity;
+using System.Security.Cryptography;
+using Microsoft.Extensions.Identity.Core;
+
+namespace GameReviewer.Models
 {
     public class UserRepository : IRepository<AppUser>
     {
         private readonly ReviewContext _reviewContext;
+        private RandomNumberGenerator _rng;
 
         public UserRepository()
         {
@@ -35,7 +40,7 @@
 
         public bool Exists(AppUser entity)
         {
-            if (_reviewContext.AppUsers.Contains(entity))
+            if (_reviewContext.AppUsers.Where(x => x.UserName == entity.UserName).FirstOrDefault() != null)
             {
                 return true;
             }
@@ -82,6 +87,16 @@
         public int GetId(AppUser entity)
         {
             return entity.Id;
+        }
+
+        public bool Login(string login, string password)
+        {
+            AppUser user = _reviewContext.AppUsers.Where(x => x.UserName == login && x.Password == password).FirstOrDefault();
+            if(user != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

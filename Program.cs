@@ -1,4 +1,5 @@
 using GameReviewer.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,17 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ReviewContext>(x => x.UseSqlServer(
         "Server=DESKTOP-EII9684;Database=GameReviewer;Trusted_Connection=True;"
     ));
-
+builder.Services.Configure<PasswordHasherOptions>(options => options.IterationCount = 512000);
+//Sesja
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(
+    options =>
+    {
+        options.IdleTimeout = TimeSpan.FromMinutes(10);
+        options.Cookie.Name = "GameReviewerCookie";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+    }); 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,6 +34,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseSession();
 
 app.UseAuthorization();
 
