@@ -4,20 +4,38 @@ using Microsoft.Extensions.Identity.Core;
 
 namespace GameReviewer.Models
 {
-    public class UserRepository : IRepository<AppUser>
+    public class UserRepository : IRepository<AppUser>, IPasswordHasher<AppUser>
     {
         private readonly ReviewContext _reviewContext;
         private RandomNumberGenerator _rng;
+        private PasswordHasher<AppUser> _passwordHasher;
 
         public UserRepository()
         {
             _reviewContext = new ReviewContext();
+            _passwordHasher = new PasswordHasher<AppUser>();
         }
+
+        public string HashPassword(AppUser user, string password)
+        {
+            return _passwordHasher.HashPassword(user, password);
+        }
+
+        public PasswordVerificationResult VerifyHashedPassword(AppUser user, string hashedPassword, string providedPassword)
+        {
+            return _passwordHasher.VerifyHashedPassword(user, hashedPassword, providedPassword);
+        }
+
         public bool Add(AppUser entity)
         {
             if (GetByTitle(entity.UserName) == null)
             {
+                entity.Reviews = new List<Review>();
+                entity.IsAdmin = false;
+                string hashedPassword = HashPassword(entity, entity.Password);
+                entity.Password = hashedPassword;
                 _reviewContext.Add(entity);
+                _reviewContext.SaveChanges();
                 return true;
             }
             return false;
@@ -35,7 +53,7 @@ namespace GameReviewer.Models
 
         public AppUser GetByTitle(string title)
         {
-            return _reviewContext.AppUsers.Where(x => x.UserName == title).First();
+            return _reviewContext.AppUsers.Where(x => x.UserName == title).FirstOrDefault();
         }
 
         public bool Exists(AppUser entity)
@@ -91,11 +109,13 @@ namespace GameReviewer.Models
 
         public bool Login(string login, string password)
         {
-            AppUser user = _reviewContext.AppUsers.Where(x => x.UserName == login && x.Password == password).FirstOrDefault();
+            AppUser user = _reviewContext.AppUsers.SingleOrDefault(x => x.UserName == login);
             if(user != null)
             {
-                return true;
-            }
+                PasswordVerificationResult res = VerifyHashedPassword(user, user.Password, password);
+                if (res == PasswordVerificationResult.Success)
+                    return true;
+            }           
             return false;
         }
     }

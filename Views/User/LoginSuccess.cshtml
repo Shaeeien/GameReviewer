@@ -1,0 +1,6 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc;
+@using System.Web;
+@inject IHttpContextAccessor httpContextAccessor
+
+<h1>Witaj, @httpContextAccessor.HttpContext.Session.GetString("Login")</h1>

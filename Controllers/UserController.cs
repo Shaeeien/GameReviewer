@@ -4,24 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GameReviewer.Controllers
 {
-    public class UserController : Controller, IPasswordHasher<AppUser>
+    public class UserController : Controller
     {
         private readonly UserRepository _userRepository;
-        private PasswordHasher<AppUser> _passwordHasher;
-        public UserController()
+        private IHttpContextAccessor _httpContextAccessor;
+
+        public UserController(IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = new UserRepository();
-            _passwordHasher = new PasswordHasher<AppUser>();
-        }
-
-        public string HashPassword(AppUser user, string password)
-        {
-            return _passwordHasher.HashPassword(user, password);
-        }
-
-        public PasswordVerificationResult VerifyHashedPassword(AppUser user, string hashedPassword, string providedPassword)
-        {
-            return VerifyHashedPassword(user, hashedPassword, providedPassword);
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IActionResult Index()
@@ -33,10 +24,16 @@ namespace GameReviewer.Controllers
         {
             if(_userRepository.Login(login, password))
             {
-                HttpContext.Session.SetString("Login", login);
-                return View();
+                if(_httpContextAccessor != null)
+                {
+                    if(_httpContextAccessor.HttpContext != null)
+                    {
+                        _httpContextAccessor.HttpContext.Session.SetString("Login", login);
+                        return View("LoginSuccess");
+                    }                    
+                }                
             }
-            return View("LoinFailed");
+            return View("LoginFailed");
         }
 
         public IActionResult Logout()
@@ -45,23 +42,38 @@ namespace GameReviewer.Controllers
             return View();
         }
 
-        public IActionResult Register(string login, string password)
+        [HttpPost]
+        public IActionResult Register(AppUser user, string repeatedPassword, bool confirm)
         {
-            AppUser newUser = new AppUser()
+            if (confirm && user.Password == repeatedPassword)
             {
-                UserName = login,
-                Password = password,
-                IsAdmin = false,
-                Reviews = new List<Review>()
-            };
-            if (!_userRepository.Exists(newUser))
-            {
-                string hashedPassword = HashPassword(newUser, password);
-                newUser.Password = hashedPassword;
-                _userRepository.Add(newUser);
-                return View("RegistrationSuccess");
-            }             
+                if (!_userRepository.Exists(user))
+                {
+                    if(_userRepository.Add(user))
+                        return View("RegistrationSuccess");
+                }
+            }                      
             return View("RegistrationFailed");
+        }
+
+        public IActionResult RegistrationSuccess()
+        {
+            return View();
+        }
+
+        public IActionResult RegistrationFailed()
+        {
+            return View();
+        }
+
+        public IActionResult RegistrationPage()
+        {
+            return View();
+        }
+
+        public IActionResult LoginPage()
+        {
+            return View();
         }
     }
 }

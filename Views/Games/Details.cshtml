@@ -1,4 +1,7 @@
 ﻿@model Game
+@using Microsoft.AspNetCore.Mvc;
+@using System.Web;
+@inject IHttpContextAccessor httpContextAccessor
 
 <h1>@Model.Name</h1>
 @*Tutaj będą fotki*@
@@ -16,22 +19,28 @@
     <textarea style="resize: none; width:500px; height:500px;" readonly>@Model.Description</textarea>
 </div>
 <br />
-@if(Context.Session.GetString("Login") != null){
-    <form asp-action="RateGame" asp-controller="Games">
-      <input type="hidden" name="user" value="@Context.Session.GetString("Login")"/>
-        <input type="hidden" name="gameId" value="@Model.Id" />
-        <textarea name="review" style="resize: none; width:500px; height:500px;"></textarea>
-        <select name="rating">
-            <option>1.0</option>
-            <option>1.5</option>
-            <option>2.0</option>
-            <option>2.5</option>
-            <option>3.0</option>
-            <option>3.5</option>
-            <option>4.0</option>
-            <option>4.5</option>
-            <option selected>5.0</option>
-        </select>
-        <button type="submit">Dodaj recenzję</button>
-    </form>
+@if(httpContextAccessor != null){
+    @if (httpContextAccessor.HttpContext != null)
+        @if (httpContextAccessor.HttpContext.Session.GetString("Login") != null)
+        {
+            <p>Komentujesz, jako @httpContextAccessor.HttpContext.Session.GetString("Login")</p>
+            <form asp-action="RateGame" asp-controller="Games">
+                <input type="hidden" name="user" value="@Context.Session.GetString("Login")" />
+                <input type="hidden" name="gameId" value="@Model.Id" />
+                <textarea name="review" style="resize: none; width:500px; height:500px;"></textarea>
+                <select name="rating">
+                    <option>1.0</option>
+                    <option>1.5</option>
+                    <option>2.0</option>
+                    <option>2.5</option>
+                    <option>3.0</option>
+                    <option>3.5</option>
+                    <option>4.0</option>
+                    <option>4.5</option>
+                    <option selected>5.0</option>
+                </select>
+                <button type="submit">Dodaj recenzję</button>
+            </form>
+        }
 }
+

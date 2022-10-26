@@ -1,0 +1,18 @@
+﻿@model AppUser
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>Rejestracja</h1>
+<form asp-controller="User" asp-action="Register" method="post">
+    <label asp-for="@Model.UserName">Login:</label><br />
+    @Html.TextBoxFor(x => x.UserName)
+    <label asp-for="@Model.Password">Hasło:</label><br />
+    @Html.PasswordFor(x => x.Password)
+    <p>Powtórz hasło:</p>
+    <input name="repeatedPassword" type="password"/><br />
+    @Html.CheckBox("confirm")
+    <label for="confirm">Zapoznałem się i akceptuję <a>regulamin</a>.</label>  
+    <button type="submit">Zarejestruj się</button>
+</form>
+

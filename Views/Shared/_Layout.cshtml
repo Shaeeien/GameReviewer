@@ -25,8 +25,16 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if(Context.Session.GetString("Login") == null){
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/User/RegistrationPage">Zarejestruj się</a>
+                            </li>
+                        }                        
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Games" asp-action="GamesList">Encyklopedia gier</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="LoginPage">Zaloguj się</a>
                         </li>
                     </ul>
                 </div>
