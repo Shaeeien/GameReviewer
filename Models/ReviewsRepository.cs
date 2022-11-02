@@ -1,12 +1,14 @@
-﻿namespace GameReviewer.Models
+﻿using Microsoft.AspNetCore.Razor.Language;
+
+namespace GameReviewer.Models
 {
-    public class ReviewsRepository : IRepository<Review>
+    public class ReviewsRepository : IRepository<Review>, IDisposable
     {
         private readonly ReviewContext _reviewContext;
         
-        public ReviewsRepository(ReviewContext reviewContext)
+        public ReviewsRepository()
         {
-            _reviewContext = reviewContext;
+            _reviewContext = new ReviewContext();
         }
         public bool Add(Review entity)
         {
@@ -16,8 +18,28 @@
                 _reviewContext.SaveChanges();
                 return true;
             }
+            return false;               
+        }
+
+        public bool AddResponse(ReviewResponse response)
+        {
+            if(response != null)
+            {
+                _reviewContext.ReviewResponses.Add(response);
+                _reviewContext.SaveChanges();
+                return true;
+            }
             return false;
-               
+        }
+
+        public IEnumerable<ReviewResponse> GetResponses(Review review)
+        {
+            return _reviewContext.ReviewResponses.Where(x => x.ReviewId == review.Id);
+        }
+
+        public void Dispose()
+        {
+            _reviewContext?.Dispose();
         }
 
         public bool Exists(Review entity)
@@ -68,9 +90,22 @@
             return false;
         }
 
-        public bool Update(int id, Review entity)
+        public bool Update(int id, Review updatedEntity)
         {
-            throw new NotImplementedException();
+            Review? reviewToUpdate = _reviewContext.Reviews.Where(x => x.Id == id).FirstOrDefault();
+            if (reviewToUpdate != null)
+            {
+                reviewToUpdate.ReviewContent = updatedEntity.ReviewContent;
+                reviewToUpdate.User = updatedEntity.User;
+                reviewToUpdate.Responses = updatedEntity.Responses;
+                reviewToUpdate.UserId = updatedEntity.UserId;
+                reviewToUpdate.CommentDate = updatedEntity.CommentDate;
+                reviewToUpdate.Game = updatedEntity.Game;
+                reviewToUpdate.GameId = updatedEntity.GameId;                
+                _reviewContext.SaveChanges();
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -24,7 +24,7 @@
         @if (httpContextAccessor.HttpContext.Session.GetString("Login") != null)
         {
             <p>Komentujesz, jako @httpContextAccessor.HttpContext.Session.GetString("Login")</p>
-            <form asp-action="RateGame" asp-controller="Games">
+            <form asp-action="AddReview" asp-controller="User">
                 <input type="hidden" name="user" value="@Context.Session.GetString("Login")" />
                 <input type="hidden" name="gameId" value="@Model.Id" />
                 <textarea name="review" style="resize: none; width:500px; height:500px;"></textarea>
@@ -43,4 +43,23 @@
             </form>
         }
 }
-
+@*Tutaj będą wyświetlone komentarze już zamieszczone, zrobić seeding przykładowymi danymi*@
+<div>
+    @using(ReviewsRepository repo = new ReviewsRepository()){
+        @foreach(Review review in repo.GetAll()){
+            <div>
+                Data: @review.CommentDate <br />
+                @review.User.UserName pisze: <br />
+                <div>
+                    @review.ReviewContent
+                </div>
+                @foreach(ReviewResponse response in repo.GetResponses(review)){
+                    <div>
+                        @response.User.UserName odpowiedział:
+                        @response.ResponseContent
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>

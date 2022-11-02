@@ -11,6 +11,7 @@ namespace GameReviewer.Models
         public string Password { get; set; } = "";
         public bool IsAdmin { get; set; } = false;
         public List<Review> Reviews { get; set; } = new List<Review>();
+        public List<ReviewResponse> ReviewResponses { get; set; } = new List<ReviewResponse>();
 
     }
 }

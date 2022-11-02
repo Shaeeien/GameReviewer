@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameReviewer.Migrations
 {
     [DbContext(typeof(ReviewContext))]
-    [Migration("20221023154553_ReviewMigration")]
-    partial class ReviewMigration
+    [Migration("20221031165202_ResponseMigration")]
+    partial class ResponseMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -154,16 +154,16 @@ namespace GameReviewer.Migrations
 
             modelBuilder.Entity("GameReviewer.Models.Review", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CommentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Id")
+                    b.Property<int>("GameId")
                         .HasColumnType("int");
 
                     b.Property<float>("Rating")
@@ -173,11 +173,42 @@ namespace GameReviewer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId", "GameId");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("GameId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("GameReviewer.Models.ReviewResponse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("ResponseContent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ReviewId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReviewId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ReviewResponses");
                 });
 
             modelBuilder.Entity("GameReviewer.Models.Category", b =>
@@ -232,8 +263,25 @@ namespace GameReviewer.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("GameReviewer.Models.ReviewResponse", b =>
+                {
+                    b.HasOne("GameReviewer.Models.Review", "Review")
+                        .WithMany("Responses")
+                        .HasForeignKey("ReviewId");
+
+                    b.HasOne("GameReviewer.Models.AppUser", "User")
+                        .WithMany("ReviewResponses")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Review");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("GameReviewer.Models.AppUser", b =>
                 {
+                    b.Navigation("ReviewResponses");
+
                     b.Navigation("Reviews");
                 });
 
@@ -249,6 +297,11 @@ namespace GameReviewer.Migrations
             modelBuilder.Entity("GameReviewer.Models.Producer", b =>
                 {
                     b.Navigation("Games");
+                });
+
+            modelBuilder.Entity("GameReviewer.Models.Review", b =>
+                {
+                    b.Navigation("Responses");
                 });
 #pragma warning restore 612, 618
         }

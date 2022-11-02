@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GameReviewer.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class ResponseMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -105,16 +105,17 @@ namespace GameReviewer.Migrations
                 name: "Reviews",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     GameId = table.Column<int>(type: "int", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false),
                     ReviewContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rating = table.Column<float>(type: "real", nullable: false),
                     CommentDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => new { x.UserId, x.GameId });
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Reviews_AppUsers_UserId",
                         column: x => x.UserId,
@@ -127,6 +128,31 @@ namespace GameReviewer.Migrations
                         principalTable: "Games",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReviewResponses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ReviewId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    ResponseContent = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReviewResponses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReviewResponses_AppUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AppUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ReviewResponses_Reviews_ReviewId",
+                        column: x => x.ReviewId,
+                        principalTable: "Reviews",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -157,9 +183,24 @@ namespace GameReviewer.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ReviewResponses_ReviewId",
+                table: "ReviewResponses",
+                column: "ReviewId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReviewResponses_UserId",
+                table: "ReviewResponses",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reviews_GameId",
                 table: "Reviews",
                 column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_UserId",
+                table: "Reviews",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -169,6 +210,9 @@ namespace GameReviewer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Images");
+
+            migrationBuilder.DropTable(
+                name: "ReviewResponses");
 
             migrationBuilder.DropTable(
                 name: "Reviews");

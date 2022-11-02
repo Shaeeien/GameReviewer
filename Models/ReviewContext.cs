@@ -22,9 +22,11 @@ namespace GameReviewer.Models
             builder.Entity<AppUser>().HasKey(x => x.Id);
             builder.Entity<AppUser>().HasIndex(x => x.UserName).IsUnique();
             builder.Entity<Review>().HasKey(x => x.Id);
-            builder.Entity<Review>().HasKey(c => new { c.UserId, c.GameId });
             builder.Entity<Review>().HasOne(x => x.User).WithMany(b => b.Reviews);
-            builder.Entity<Review>().HasOne(x => x.User).WithMany(b => b.Reviews);
+            builder.Entity<Review>().HasOne(x => x.Game).WithMany(b => b.Reviews);
+            builder.Entity<ReviewResponse>().HasKey(x => x.Id);
+            builder.Entity<ReviewResponse>().HasOne(x => x.Review).WithMany(x => x.Responses);
+            builder.Entity<ReviewResponse>().HasOne(x => x.User).WithMany(x => x.ReviewResponses);
             builder.Entity<Game>().HasKey(x => x.Id);
             builder.Entity<Game>().HasIndex(x => x.Name).IsUnique();
             builder.Entity<Game>().HasMany(x => x.Reviews).WithOne(b => b.Game);
@@ -43,5 +45,6 @@ namespace GameReviewer.Models
         public DbSet<Image> Images { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Producer> Producers { get; set; }
+        public DbSet<ReviewResponse> ReviewResponses { get; set; }
     }
 }

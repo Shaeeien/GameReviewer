@@ -7,11 +7,13 @@ namespace GameReviewer.Controllers
     public class UserController : Controller
     {
         private readonly UserRepository _userRepository;
+        private readonly ReviewsRepository _reviewRepository;
         private IHttpContextAccessor _httpContextAccessor;
 
         public UserController(IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = new UserRepository();
+            _reviewRepository = new ReviewsRepository();
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -54,6 +56,27 @@ namespace GameReviewer.Controllers
                 }
             }                      
             return View("RegistrationFailed");
+        }
+
+        public IActionResult AddReview(AppUser user, Game game, string reviewContent, float rating)
+        {
+            Review review = new Review()
+            {
+                User = user,
+                UserId = user.Id,
+                Game = game,
+                GameId = game.Id,
+                ReviewContent = reviewContent,
+                Rating = rating
+            };
+            if(_reviewRepository.Add(review))
+                return View("ReviewAddSuccess");
+            return View("ReviewAddFailure");
+        }
+
+        public IActionResult AddResponse(Review review, string response, AppUser respondingUser)
+        {
+            return View();
         }
 
         public IActionResult RegistrationSuccess()
