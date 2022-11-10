@@ -1,23 +1,23 @@
 ﻿<h1>Lista gier</h1>
-<form>
-    @using(GameRepository games = new GameRepository(new ReviewContext()))
-    @using(ImageRepository img = new ImageRepository(new ReviewContext()))
-    @foreach(Game game in games.GetAll()){
-        <div>
-            <h2>@game.Name</h2>
-            @*
-                CHYBA DZIAŁA, POTESTOWAĆ
-                DODAĆ WŁAŚCIWOŚĆ SPRAWDZAJĄCĄ, CZY TO OKŁADKA, TUTAJ SPRAWDZAĆ TEN WARUNEK
-                I WYŚWIETLAĆ TYLKO  OKŁADKĘ, W SZCZEGÓŁACH WYŚWIETLAĆ RESZTĘ
-            *@
-            @foreach(Image @imag in @img.GetByGame(game)){
-                <img src="data:image/jpeg;base64,@Convert.ToBase64String(@imag.Data)" />
-            }
-            <form asp-controller="Games" asp-action="Details">
-                <input name="id" type="hidden" value=@game.Id />
-                <button type="submit">Szczegóły</button>
-            </form>
+
+@using(GameRepository games = new GameRepository(new ReviewContext()))
+@using(ImageRepository img = new ImageRepository(new ReviewContext()))
+@foreach(Game game in games.GetAll()){
+    <div>
+        <h2>@game.Name</h2>
+        @*
+            CHYBA DZIAŁA, POTESTOWAĆ
+            DODAĆ WŁAŚCIWOŚĆ SPRAWDZAJĄCĄ, CZY TO OKŁADKA, TUTAJ SPRAWDZAĆ TEN WARUNEK
+            I WYŚWIETLAĆ TYLKO  OKŁADKĘ, W SZCZEGÓŁACH WYŚWIETLAĆ RESZTĘ
+        *@
+        @foreach(Image @imag in @img.GetByGame(game)){
+            <img src="data:image/jpeg;base64,@Convert.ToBase64String(@imag.Data)" />
+        }
+        <br />
+        <form asp-controller="Games" asp-antiforgery="false" asp-action="Details" method="post">
+            <input name="id" type="hidden" value=@game.Id />
+            <button type="submit">Szczegóły</button>
+        </form>
                       
-        </div>
-    }
-</form>
+    </div>
+}

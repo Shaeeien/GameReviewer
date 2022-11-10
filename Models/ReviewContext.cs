@@ -14,7 +14,7 @@ namespace GameReviewer.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
-            builder.UseSqlServer("Server=DESKTOP-EII9684;Database=GameReviewer;Trusted_Connection=True;");
+            builder.UseSqlServer("Server=DESKTOP-EII9684;Database=GameReviewer;Trusted_Connection=True;MultipleActiveResultSets=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

@@ -1,6 +1,7 @@
 ﻿using GameReviewer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace GameReviewer.Controllers
 {
@@ -9,11 +10,14 @@ namespace GameReviewer.Controllers
         private readonly UserRepository _userRepository;
         private readonly ReviewsRepository _reviewRepository;
         private IHttpContextAccessor _httpContextAccessor;
+        private readonly GameRepository _gameRepository;
 
         public UserController(IHttpContextAccessor httpContextAccessor)
         {
-            _userRepository = new UserRepository();
-            _reviewRepository = new ReviewsRepository();
+            ReviewContext ctx = new ReviewContext();
+            _userRepository = new UserRepository(ctx);
+            _reviewRepository = new ReviewsRepository(ctx);
+            _gameRepository = new GameRepository(ctx);
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -58,19 +62,20 @@ namespace GameReviewer.Controllers
             return View("RegistrationFailed");
         }
 
-        public IActionResult AddReview(AppUser user, Game game, string reviewContent, float rating)
+        public IActionResult AddReview(string user, int game, string reviewContent, string rating)
         {
             Review review = new Review()
             {
-                User = user,
-                UserId = user.Id,
-                Game = game,
-                GameId = game.Id,
+                User = _userRepository.GetByTitle(user),
+                UserId = _userRepository.GetByTitle(user).Id,
+                Game = _gameRepository.GetById(game),
+                GameId = game,
                 ReviewContent = reviewContent,
-                Rating = rating
+                Rating = float.Parse(rating, CultureInfo.InvariantCulture),
+                CommentDate = DateTime.Now
             };
             if(_reviewRepository.Add(review))
-                return View("ReviewAddSuccess");
+                return View("/Views/Games/Details", game);
             return View("ReviewAddFailure");
         }
 

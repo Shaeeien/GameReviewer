@@ -4,9 +4,9 @@
     {
         private readonly ReviewContext _reviewContext;
 
-        public GameRepository(ReviewContext reviewContext)
+        public GameRepository(ReviewContext ctx)
         {
-            _reviewContext = reviewContext;
+            _reviewContext = ctx;
         }
         public bool Add(Game entity)
         {
@@ -24,12 +24,12 @@
             return _reviewContext.Games;
         }
 
-        public Game? GetById(int id)
+        public Game GetById(int id)
         {
-            return _reviewContext.Games.Where(x => x.Id == id).First();
+            return _reviewContext.Games.Where(x => x.Id == id).FirstOrDefault();
         }
 
-        public Game? GetByTitle(string title)
+        public Game GetByTitle(string title)
         {
             return _reviewContext.Games.Where(x => x.Name == title).FirstOrDefault();
         }

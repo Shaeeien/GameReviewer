@@ -6,9 +6,9 @@ namespace GameReviewer.Models
     {
         private readonly ReviewContext _reviewContext;
         
-        public ReviewsRepository()
+        public ReviewsRepository(ReviewContext ctx)
         {
-            _reviewContext = new ReviewContext();
+            _reviewContext = ctx;
         }
         public bool Add(Review entity)
         {
@@ -52,6 +52,10 @@ namespace GameReviewer.Models
             return _reviewContext.Reviews.ToList();
         }
 
+        public IEnumerable<Review> GetByGame(Game game)
+        {
+            return _reviewContext.Reviews.Where(x => x.GameId == game.Id);
+        }
         public Review? GetById(int id)
         {
             return _reviewContext.Reviews.Where(x => x.Id == id).FirstOrDefault(); 

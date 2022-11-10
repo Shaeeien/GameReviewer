@@ -26,38 +26,47 @@
             <p>Komentujesz, jako @httpContextAccessor.HttpContext.Session.GetString("Login")</p>
             <form asp-action="AddReview" asp-controller="User">
                 <input type="hidden" name="user" value="@Context.Session.GetString("Login")" />
-                <input type="hidden" name="gameId" value="@Model.Id" />
-                <textarea name="review" style="resize: none; width:500px; height:500px;"></textarea>
+                <input type="hidden" name="game" value="@Model.Id" />
+                <textarea name="reviewContent" style="resize: none; width:500px; height:500px;"></textarea>
                 <select name="rating">
-                    <option>1.0</option>
-                    <option>1.5</option>
-                    <option>2.0</option>
-                    <option>2.5</option>
-                    <option>3.0</option>
-                    <option>3.5</option>
-                    <option>4.0</option>
-                    <option>4.5</option>
-                    <option selected>5.0</option>
+                    <option value="1.0">1.0</option>
+                    <option value="1.5">1.5</option>
+                    <option value="2.0">2.0</option>
+                    <option value="2.5">2.5</option>
+                    <option value="3.0">3.0</option>
+                    <option value="3.5">3.5</option>
+                    <option value="4.0">4.0</option>
+                    <option value="4.5">4.5</option>
+                    <option value="5.0" selected>5.0</option>
                 </select>
                 <button type="submit">Dodaj recenzję</button>
             </form>
         }
 }
-@*Tutaj będą wyświetlone komentarze już zamieszczone, zrobić seeding przykładowymi danymi*@
+@*Tutaj będą wyświetlone komentarze już zamieszczone, zrobić seeding przykładowymi danymi
+    UŻYWAĆ GIT CMD!
+*@
 <div>
-    @using(ReviewsRepository repo = new ReviewsRepository()){
-        @foreach(Review review in repo.GetAll()){
+    @using(UserRepository userRep = new UserRepository(new ReviewContext()))
+    @using(ReviewsRepository repo = new ReviewsRepository(new ReviewContext())){
+        @foreach(Review review in repo.GetByGame(Model)){
             <div>
                 Data: @review.CommentDate <br />
-                @review.User.UserName pisze: <br />
+                @userRep.GetById(review.UserId).UserName napisał: <br />
                 <div>
                     @review.ReviewContent
                 </div>
+                <div>
+                    Ocena: @review.Rating
+                </div>
                 @foreach(ReviewResponse response in repo.GetResponses(review)){
-                    <div>
-                        @response.User.UserName odpowiedział:
-                        @response.ResponseContent
-                    </div>
+
+                        @if(response.User != null){
+                            <div>
+                                @response.User.UserName odpowiedział:
+                                @response.ResponseContent
+                            </div>
+                        }                        
                 }
             </div>
         }

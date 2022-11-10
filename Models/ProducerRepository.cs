@@ -4,9 +4,9 @@
     {
         private readonly ReviewContext _reviewContext;
 
-        public ProducerRepository(ReviewContext reviewContext)
+        public ProducerRepository(ReviewContext ctx)
         {
-            _reviewContext = reviewContext;
+            _reviewContext = ctx;
         }
 
         public bool Add(Producer entity)

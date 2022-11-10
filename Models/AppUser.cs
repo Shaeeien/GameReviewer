@@ -4,6 +4,7 @@ namespace GameReviewer.Models
 {
     public class AppUser
     {
+        [Key]
         public int Id { get; set; }
         [Required(ErrorMessage = "Login jest wymagany")]
         public string UserName { get; set; } = "";

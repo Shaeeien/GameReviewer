@@ -3,9 +3,9 @@
     public class ImageRepository : IRepository<Image>, IDisposable
     {
         private readonly ReviewContext _reviewContext;
-        public ImageRepository(ReviewContext reviewContext)
+        public ImageRepository(ReviewContext ctx)
         {
-            _reviewContext = reviewContext;
+            _reviewContext = ctx;
         }
 
         public bool Add(Image entity)
