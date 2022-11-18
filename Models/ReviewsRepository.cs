@@ -6,9 +6,9 @@ namespace GameReviewer.Models
     {
         private readonly ReviewContext _reviewContext;
         
-        public ReviewsRepository(ReviewContext ctx)
+        public ReviewsRepository()
         {
-            _reviewContext = ctx;
+            _reviewContext = new ReviewContext();
         }
         public bool Add(Review entity)
         {
@@ -110,6 +110,11 @@ namespace GameReviewer.Models
                 return true;
             }
             return false;
+        }
+
+        public bool ExistsById(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

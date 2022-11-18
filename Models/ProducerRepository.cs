@@ -4,9 +4,9 @@
     {
         private readonly ReviewContext _reviewContext;
 
-        public ProducerRepository(ReviewContext ctx)
+        public ProducerRepository()
         {
-            _reviewContext = ctx;
+            _reviewContext = new ReviewContext();
         }
 
         public bool Add(Producer entity)
@@ -40,7 +40,7 @@
             return _reviewContext?.Producers.Where(x => x.Name == name).FirstOrDefault();
         }
 
-        bool IRepository<Producer>.Remove(Producer entity)
+        public bool Remove(Producer entity)
         {
             var removedProducer = _reviewContext.Producers.Remove(entity);
             if (removedProducer != null)
@@ -80,6 +80,14 @@
         public int GetId(Producer entity)
         {
             return entity.Id;
+        }
+
+        public bool ExistsById(int id)
+        {
+            Producer p = _reviewContext.Producers.Where(x => x.Id == id).FirstOrDefault();
+            if (p != null)
+                return true;
+            return false;
         }
     }
 }

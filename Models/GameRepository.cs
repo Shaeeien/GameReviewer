@@ -4,9 +4,9 @@
     {
         private readonly ReviewContext _reviewContext;
 
-        public GameRepository(ReviewContext ctx)
+        public GameRepository()
         {
-            _reviewContext = ctx;
+            _reviewContext = new ReviewContext();
         }
         public bool Add(Game entity)
         {
@@ -88,6 +88,14 @@
         public void Dispose()
         {
             _reviewContext?.Dispose();
+        }
+
+        public bool ExistsById(int id)
+        {
+            Game game = _reviewContext.Games.FirstOrDefault(x => x.Id == id);
+            if (game != null)
+                return true;
+            return false;
         }
     }
 }

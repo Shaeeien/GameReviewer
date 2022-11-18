@@ -7,17 +7,16 @@ namespace GameReviewer.Controllers
 {
     public class UserController : Controller
     {
-        private readonly UserRepository _userRepository;
-        private readonly ReviewsRepository _reviewRepository;
+        private readonly IUserRepository<AppUser> _userRepository;
+        private readonly IRepository<Review> _reviewRepository;
         private IHttpContextAccessor _httpContextAccessor;
-        private readonly GameRepository _gameRepository;
+        private readonly IRepository<Game> _gameRepository;
 
-        public UserController(IHttpContextAccessor httpContextAccessor)
+        public UserController(IHttpContextAccessor httpContextAccessor, IRepository<Review> reviewRepo, IUserRepository<AppUser> userRepo, IRepository<Game> gameRepo)
         {
-            ReviewContext ctx = new ReviewContext();
-            _userRepository = new UserRepository(ctx);
-            _reviewRepository = new ReviewsRepository(ctx);
-            _gameRepository = new GameRepository(ctx);
+            _userRepository = userRepo;
+            _reviewRepository = reviewRepo;
+            _gameRepository = gameRepo;
             _httpContextAccessor = httpContextAccessor;
         }
 

@@ -4,14 +4,14 @@ using Microsoft.Extensions.Identity.Core;
 
 namespace GameReviewer.Models
 {
-    public class UserRepository : IRepository<AppUser>, IPasswordHasher<AppUser>, IDisposable
+    public class UserRepository : IUserRepository<AppUser>, IPasswordHasher<AppUser>, IDisposable
     {
         private readonly ReviewContext _reviewContext;
         private PasswordHasher<AppUser> _passwordHasher;
 
-        public UserRepository(ReviewContext ctx)
+        public UserRepository()
         {
-            _reviewContext = ctx;
+            _reviewContext = new ReviewContext();
             _passwordHasher = new PasswordHasher<AppUser>();
         }
 
@@ -121,6 +121,14 @@ namespace GameReviewer.Models
         public void Dispose()
         {
             _reviewContext.Dispose();
+        }
+
+        public bool ExistsById(int id)
+        {
+            AppUser user = _reviewContext.AppUsers.First(x => x.Id == id);
+            if (user != null)
+                return true;
+            return false;
         }
     }
 }

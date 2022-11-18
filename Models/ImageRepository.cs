@@ -3,9 +3,9 @@
     public class ImageRepository : IRepository<Image>, IDisposable
     {
         private readonly ReviewContext _reviewContext;
-        public ImageRepository(ReviewContext ctx)
+        public ImageRepository()
         {
-            _reviewContext = ctx;
+            _reviewContext = new ReviewContext();
         }
 
         public bool Add(Image entity)
@@ -95,6 +95,14 @@
                 _reviewContext.SaveChanges();
                 return true;
             }
+            return false;
+        }
+
+        public bool ExistsById(int id)
+        {
+            Image img = _reviewContext.Images.FirstOrDefault(x => x.Id == id);
+            if (img != null)
+                return true;
             return false;
         }
     }

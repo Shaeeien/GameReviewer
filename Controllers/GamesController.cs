@@ -8,12 +8,14 @@ namespace GameReviewer.Controllers
 {
     public class GamesController : Controller
     {
-        private readonly ReviewContext _reviewContext;
-        private GameRepository _repo;
-        public GamesController()
+        private readonly IRepository<Game> _gameRepo;
+        private readonly IRepository<Producer> _producerRepo;
+        private readonly IRepository<Image> _imageRepo;
+        public GamesController(IRepository<Game> gameRepo, IRepository<Producer> producerRepo, IRepository<Image> imageRepo)
         {
-            _reviewContext = new ReviewContext();
-            _repo = new GameRepository(_reviewContext);
+            _gameRepo = gameRepo;
+            _producerRepo = producerRepo;
+            _imageRepo = imageRepo;
         }
         public IActionResult Index()
         {
@@ -32,7 +34,7 @@ namespace GameReviewer.Controllers
 
         public IActionResult Details(int id)
         {
-            Game game = _repo.GetById(id);
+            Game game = _gameRepo.GetById(id);
             if(game != null)
                 return View(game);
             return View("GameNotFound");
@@ -41,13 +43,11 @@ namespace GameReviewer.Controllers
         [HttpPost]
         public IActionResult AddGame(string name, string producer, int producerId, int avgLength, string description,[FromForm(Name = "images")] List<IFormFile> images)
         {
-            ProducerRepository producerRepository = new ProducerRepository(_reviewContext);
-            ImageRepository imageRepository = new ImageRepository(_reviewContext);
             List<Image> img = new List<Image>();
             Game gameToAdd = new Game
             {
                 Name = name,
-                Producer = producerRepository.GetByTitle(producer),
+                Producer = _producerRepo.GetByTitle(producer),
                 ProducerId = producerId,
                 Description = description,
                 AvgPlayTimeInHours = avgLength,
@@ -76,12 +76,12 @@ namespace GameReviewer.Controllers
                                     GameId = gameToAdd.Id
                                 };
                                 gameToAdd.GameImages.Add(toAdd);
-                                _reviewContext.Images.Add(toAdd);
+                                _imageRepo.Add(toAdd);
                             }
                         }
                     }
                 }
-                if (_repo.Add(gameToAdd))
+                if (_gameRepo.Add(gameToAdd))
                     return View("AddingSuccessful", gameToAdd);
             }            
             return View("AddingFailed", gameToAdd);
@@ -96,17 +96,5 @@ namespace GameReviewer.Controllers
         {
             return View();
         }
-
-        public IActionResult RateGame(int gameId, string user, double rating, string review)
-        {
-            return View();
-        }
-
-        //public IActionResult GameDetails(Game game)
-        //{
-        //    if(game != null)
-        //        return View(game);
-        //    return View("GameNotFound");
-        //}
     }
 }

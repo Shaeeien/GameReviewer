@@ -10,7 +10,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<ReviewContext>(x => x.UseSqlServer(
         "Server=DESKTOP-EII9684;Database=GameReviewer;Trusted_Connection=True;"
     ));
-
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<IRepository<Producer>, ProducerRepository>();
+builder.Services.AddSingleton<IRepository<Game>, GameRepository>();
+builder.Services.AddSingleton<IRepository<Image>, ImageRepository>();
+builder.Services.AddSingleton<IRepository<Review>, ReviewsRepository>();
+builder.Services.AddSingleton<IUserRepository<AppUser>, UserRepository>();
 builder.Services.Configure<PasswordHasherOptions>(options => options.IterationCount = 512000);
 //Sesja
 builder.Services.AddDistributedMemoryCache();
@@ -23,7 +28,7 @@ builder.Services.AddSession(
         options.Cookie.IsEssential = true;
     });
 builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

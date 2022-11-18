@@ -1,6 +1,6 @@
 ﻿namespace GameReviewer.Models
 {
-    public interface IRepository<T>
+    public interface IUserRepository<T>
     {
         public bool Add(T entity);
         public bool Update(int id, T entity);
@@ -12,5 +12,6 @@
         public IEnumerable<T> GetAll();
         public T? GetByTitle(string title);
         public int GetId(T entity);
+        public bool Login(string login, string password);
     }
 }

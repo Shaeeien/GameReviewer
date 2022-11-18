@@ -1,7 +1,7 @@
 ﻿<h1>Lista gier</h1>
 
-@using(GameRepository games = new GameRepository(new ReviewContext()))
-@using(ImageRepository img = new ImageRepository(new ReviewContext()))
+@using(GameRepository games = new GameRepository())
+@using(ImageRepository img = new ImageRepository())
 @foreach(Game game in games.GetAll()){
     <div>
         <h2>@game.Name</h2>
@@ -16,7 +16,7 @@
         <br />
         <form asp-controller="Games" asp-antiforgery="false" asp-action="Details" method="post">
             <input name="id" type="hidden" value=@game.Id />
-                <button class="btn btn-secondary" type="submit">Szczegóły</button>
+            <button class="btn btn-secondary" type="submit">Szczegóły</button>
         </form>
                       
     </div>

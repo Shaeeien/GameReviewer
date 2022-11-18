@@ -11,29 +11,28 @@ namespace GameReviewer.Controllers
 {
     public class ProducersController : Controller
     {
-        private readonly ReviewContext _context;
+        private readonly IRepository<Producer> _repo;
 
-        public ProducersController()
+        public ProducersController(IRepository<Producer> repo)
         {
-            _context = new ReviewContext();
+            _repo = repo;
         }
 
         // GET: Producers
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-              return View(await _context.Producers.ToListAsync());
+              return View(_repo.GetAll());
         }
 
         // GET: Producers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Producers == null)
+            if (id == null || _repo.GetAll() == null)
             {
                 return NotFound();
             }
 
-            var producer = await _context.Producers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var producer = _repo.GetAll().FirstOrDefault(m => m.Id == id);
             if (producer == null)
             {
                 return NotFound();
@@ -55,8 +54,7 @@ namespace GameReviewer.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Id,Name,Desciption")] Producer producer)
         {
-            ProducerRepository producerRepository = new ProducerRepository(_context);
-            if (producerRepository.Add(producer))
+            if (_repo.Add(producer))
             {
                 return View();
             }
@@ -65,14 +63,14 @@ namespace GameReviewer.Controllers
         }
 
         // GET: Producers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
-            if (id == null || _context.Producers == null)
+            if (id == null || _repo.GetAll() == null)
             {
                 return NotFound();
             }
 
-            var producer = await _context.Producers.FindAsync(id);
+            var producer = _repo.GetAll().Where(x => x.Id == id);
             if (producer == null)
             {
                 return NotFound();
@@ -85,7 +83,7 @@ namespace GameReviewer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Desciption")] Producer producer)
+        public IActionResult Edit(int id, [Bind("Id,Name,Desciption")] Producer producer)
         {
             if (id != producer.Id)
             {
@@ -96,8 +94,7 @@ namespace GameReviewer.Controllers
             {
                 try
                 {
-                    _context.Update(producer);
-                    await _context.SaveChangesAsync();
+                    _repo.Update(id, producer);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -116,15 +113,14 @@ namespace GameReviewer.Controllers
         }
 
         // GET: Producers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
-            if (id == null || _context.Producers == null)
+            if (id == null || _repo.GetAll() == null)
             {
                 return NotFound();
             }
 
-            var producer = await _context.Producers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var producer = _repo.GetAll().FirstOrDefault(m => m.Id == id);
             if (producer == null)
             {
                 return NotFound();
@@ -136,25 +132,27 @@ namespace GameReviewer.Controllers
         // POST: Producers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            if (_context.Producers == null)
+            if (_repo.GetAll() == null)
             {
                 return Problem("Entity set 'ReviewContext.Producers'  is null.");
             }
-            var producer = await _context.Producers.FindAsync(id);
+            Producer producer = _repo.GetAll().Where(x => x.Id == id).FirstOrDefault();
             if (producer != null)
             {
-                _context.Producers.Remove(producer);
+                _repo.Remove(producer);
             }
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProducerExists(int id)
         {
-          return _context.Producers.Any(e => e.Id == id);
+            Producer producer = _repo.GetAll().FirstOrDefault(x => x.Id == id);
+            if(producer != null)
+                return _repo.Exists(producer);
+            return false;
         }
     }
 }
