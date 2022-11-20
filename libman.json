@@ -7,9 +7,16 @@
       "destination": "wwwroot/lib/twitter-bootstrap/"
     },
     {
-      "provider": "cdnjs",
       "library": "jquery@3.6.1",
       "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "jcarousel@0.3.9",
+      "destination": "wwwroot/lib/jcarousel/"
+    },
+    {
+      "library": "bootstrap@5.2.2",
+      "destination": "wwwroot/lib/bootstrap/"
     }
   ]
 }
